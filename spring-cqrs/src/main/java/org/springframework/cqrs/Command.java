@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * @since 2.5
  * @see Command
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Command {
