@@ -182,11 +182,13 @@ class SimpleAsyncTaskExecutorTests {
 	@Test
 	void taskTerminationTimeoutWithEarlyInterrupt() throws InterruptedException {
 		AtomicBoolean interrupted = new AtomicBoolean();
+		CountDownLatch started = new CountDownLatch(1);
 		Future<?> future;
 		try (SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor()) {
 			executor.setTaskTerminationTimeout(500);
 			executor.setCancelRemainingTasksOnClose(true);
 			future = executor.submit(() -> {
+				started.countDown();
 				try {
 					Thread.sleep(200);
 				}
@@ -195,7 +197,7 @@ class SimpleAsyncTaskExecutorTests {
 					interrupted.set(true);
 				}
 			});
-			Thread.sleep(100);
+			assertThat(started.await(10, TimeUnit.SECONDS)).isTrue();
 		}
 		assertThatNoException().isThrownBy(future::get);
 		assertThat(interrupted).isTrue();

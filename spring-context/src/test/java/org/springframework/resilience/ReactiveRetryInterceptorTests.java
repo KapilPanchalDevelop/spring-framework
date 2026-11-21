@@ -478,7 +478,7 @@ class ReactiveRetryInterceptorTests {
 					.satisfies(isReactiveException())
 					.havingCause()
 						.isInstanceOf(TimeoutException.class)
-						.withMessageContaining("within 20ms");
+						.withMessageContaining("within 200ms");
 			// 1 initial attempt + 2 retries
 			assertThat(target.counter).hasValue(3);
 		}
@@ -608,12 +608,12 @@ class ReactiveRetryInterceptorTests {
 			});
 		}
 
-		@Retryable(timeout = 20, delay = 0)
+		@Retryable(timeout = 200, delay = 0)
 		public Mono<Object> retryOperationWithTimeoutExceededAfterSecondRetry() {
 			return Mono.fromCallable(() -> {
 				counter.incrementAndGet();
 				if (counter.get() == 3) {
-					Thread.sleep(100);
+					Thread.sleep(300);
 				}
 				throw new IOException(counter.toString());
 			});
